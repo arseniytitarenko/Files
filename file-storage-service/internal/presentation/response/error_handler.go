@@ -2,10 +2,14 @@ package response
 
 import (
 	"errors"
+	"files/internal/application/errs"
+	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 var errorStatusMap = map[error]int{
-	errs.ErrAnimalNotFound: http.StatusNotFound,
+	errs.ErrFileNotFound:  http.StatusNotFound,
+	errs.FailedToReadFile: http.StatusBadRequest,
 }
 
 func HandleError(c *gin.Context, err error) {
