@@ -8,8 +8,11 @@ import (
 )
 
 var errorStatusMap = map[error]int{
-	errs.ErrFileNotFound:  http.StatusNotFound,
-	errs.FailedToReadFile: http.StatusBadRequest,
+	errs.ErrFileNotFound:   http.StatusNotFound,
+	errs.FailedToReadFile:  http.StatusBadRequest,
+	errs.InvalidFileFormat: http.StatusBadRequest,
+	errs.InvalidID:         http.StatusBadRequest,
+	errs.FileNotFound:      http.StatusNotFound,
 }
 
 func HandleError(c *gin.Context, err error) {

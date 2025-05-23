@@ -2,6 +2,7 @@ package repository
 
 import (
 	"files/internal/domain"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -13,7 +14,7 @@ func NewPgFileDataRepo(db *gorm.DB) *PgFileDataRepo {
 	return &PgFileDataRepo{db: db}
 }
 
-func (r *PgFileDataRepo) GetFileData(fileDataID string) (*domain.FileData, error) {
+func (r *PgFileDataRepo) GetFileData(fileDataID uuid.UUID) (*domain.FileData, error) {
 	var fileData domain.FileData
 	if err := r.db.Where("id = ?", fileDataID).First(&fileData).Error; err != nil {
 		return nil, err
