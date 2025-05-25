@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"files-analysis/internal/application/errs"
 	"files-analysis/internal/application/port/out"
 	"files-analysis/internal/domain"
 	"io"
@@ -10,15 +11,26 @@ import (
 type AnalysisService struct {
 	analysisRepo  out.AnalysisRepo
 	wordcloudRepo out.WordCloudRepo
+	fileApi       out.FileApi
+	quickChartApi out.QuickChartApi
 }
 
-func NewAnalysisService(analysisRepo out.AnalysisRepo, wordcloudRepo out.WordCloudRepo) *AnalysisService {
-	return &AnalysisService{analysisRepo: analysisRepo, wordcloudRepo: wordcloudRepo}
+func NewAnalysisService(
+	analysisRepo out.AnalysisRepo,
+	wordcloudRepo out.WordCloudRepo,
+	fileApi out.FileApi,
+	quickChartApi out.QuickChartApi) *AnalysisService {
+	return &AnalysisService{analysisRepo, wordcloudRepo, fileApi, quickChartApi}
 }
 
 func (s *AnalysisService) AnalyzeFile(ctx context.Context, fileID string) (*domain.Analysis, error) {
-	return nil, nil
+
 }
+
 func (s *AnalysisService) GetWordCloud(ctx context.Context, location string) (io.ReadCloser, error) {
-	return nil, nil
+	file, err := s.wordcloudRepo.GetWordCloud(ctx, location)
+	if err != nil {
+		return nil, errs.ErrLocationNotFound
+	}
+	return file, nil
 }

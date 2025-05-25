@@ -4,6 +4,7 @@ import (
 	"files-analysis/internal/application/service"
 	"files-analysis/internal/domain"
 	"files-analysis/internal/infrastructure/database"
+	"files-analysis/internal/infrastructure/externalapi"
 	"files-analysis/internal/infrastructure/repository"
 	"files-analysis/internal/infrastructure/storage"
 	"files-analysis/internal/presentation/handler"
@@ -22,7 +23,10 @@ func main() {
 	analysisRepo := repository.NewPgAnalysisRepo(db)
 	wordCloudRepo := repository.NewMinioWordCloudRepository(minioClient, "wordcloud")
 
-	analysisService := service.NewAnalysisService(analysisRepo, wordCloudRepo)
+	fileApi := externalapi.NewFileApiClient()
+	quickChartApi := externalapi.NewQuickChartApiClient()
+
+	analysisService := service.NewAnalysisService(analysisRepo, wordCloudRepo, fileApi, quickChartApi)
 
 	analysisHandler := handler.NewAnalysisHandler(analysisService)
 
