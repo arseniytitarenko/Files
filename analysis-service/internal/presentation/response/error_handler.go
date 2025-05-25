@@ -12,6 +12,7 @@ var errorStatusMap = map[error]int{
 	errs.ErrLocationNotFound: http.StatusNotFound,
 	errs.ExternalApiError:    http.StatusServiceUnavailable,
 	errs.StorageServiceError: http.StatusServiceUnavailable,
+	errs.InvalidID:           http.StatusBadRequest,
 }
 
 func HandleError(c *gin.Context, err error) {

@@ -1,5 +1,5 @@
 package out
 
 type FileApi interface {
-	GetFile(id string) (string, error)
+	GetFile(id string) (string, string, error)
 }
