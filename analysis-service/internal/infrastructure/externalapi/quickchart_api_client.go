@@ -38,7 +38,7 @@ func (c *QuickChartApiClient) GetWordCloud(text string) (io.Reader, int64, error
 		FontStyle:       "sans-serif",
 		RemoveStopwords: true,
 		MaxNumWords:     50,
-		MinWordLength:   3,
+		MinWordLength:   4,
 	}
 
 	jsonData, err := json.Marshal(params)
