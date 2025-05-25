@@ -47,44 +47,47 @@ services:
     networks:
       - backend
 
-#  analysis-service:
-#    build: ./analysis-service
-#    depends_on:
-#      - analysis-db
-#      - analysis-minio
-#    environment:
-#      - DB_HOST=analysis-db
-#      - DB_PORT=5432
-#      - DB_USER=postgres
-#      - DB_PASSWORD=postgres
-#      - DB_NAME=analysis
-#      - MINIO_ENDPOINT=http://analysis-minio:9000
-#    networks:
-#      - backend
-#
-#  analysis-db:
-#    image: postgres:15
-#    environment:
-#      POSTGRES_DB: analysis
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: postgres
-#    volumes:
-#      - analysis-db-data:/var/lib/postgresql/data
-#    networks:
-#      - backend
-#
-#  analysis-minio:
-#    image: minio/minio
-#    command: server /data --console-address ":9002"
-#    environment:
-#      MINIO_ROOT_USER: minioadmin
-#      MINIO_ROOT_PASSWORD: minioadmin
-#    volumes:
-#      - analysis-minio-data:/data
-#    ports:
-#      - "9002:9002"
-#    networks:
-#      - backend
+  analysis-service:
+    build: ./analysis-service
+    depends_on:
+      - analysis-db
+      - analysis-minio
+    environment:
+      - DB_HOST=analysis-db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=analysis
+      - MINIO_ENDPOINT=analysis-minio:9000
+    restart: always
+    networks:
+      - backend
+
+  analysis-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: analysis
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - analysis-db-data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  analysis-minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: analysis
+      MINIO_ROOT_PASSWORD: admin123
+    volumes:
+      - analysis-minio-data:/data
+    ports:
+      - "9002:9001"
+    networks:
+      - backend
 
   nginx:
     image: nginx:alpine
@@ -102,8 +105,8 @@ services:
 volumes:
   storage-db-data:
   storage-minio-data:
-#  analysis-db-data:
-#  analysis-minio-data:
+  analysis-db-data:
+  analysis-minio-data:
 
 networks:
   backend:
