@@ -5,17 +5,19 @@ import (
 	"encoding/json"
 	"files-analysis/internal/application/errs"
 	"io"
+	"log"
 	"net/http"
 )
 
 type WordCloudParams struct {
-	Format          string   `json:"format"`
-	Text            string   `json:"text"`
-	Width           int      `json:"width"`
-	Height          int      `json:"height"`
-	Colors          []string `json:"colors"`
-	FontStyle       string   `json:"fontFamily"`
-	RemoveStopwords bool     `json:"removeStopwords"`
+	Format          string `json:"format"`
+	Text            string `json:"text"`
+	Width           int    `json:"width"`
+	Height          int    `json:"height"`
+	FontStyle       string `json:"fontFamily"`
+	RemoveStopwords bool   `json:"removeStopwords"`
+	MaxNumWords     int    `json:"maxNumWords"`
+	MinWordLength   int    `json:"minWordLength"`
 }
 
 type QuickChartApiClient struct {
@@ -33,9 +35,10 @@ func (c *QuickChartApiClient) GetWordCloud(text string) (io.Reader, int64, error
 		Text:            text,
 		Width:           1000,
 		Height:          1000,
-		Colors:          []string{"#FF5733", "#33FF57", "#3357FF"},
 		FontStyle:       "sans-serif",
 		RemoveStopwords: true,
+		MaxNumWords:     50,
+		MinWordLength:   3,
 	}
 
 	jsonData, err := json.Marshal(params)
@@ -49,13 +52,22 @@ func (c *QuickChartApiClient) GetWordCloud(text string) (io.Reader, int64, error
 		bytes.NewBuffer(jsonData),
 	)
 	if err != nil {
+		log.Println(err)
 		return nil, 0, errs.ExternalApiError
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		log.Println(resp.Status)
 		return nil, 0, errs.ExternalApiError
 	}
 
-	return resp.Body, resp.ContentLength, nil
+	buf := new(bytes.Buffer)
+	n, err := io.Copy(buf, resp.Body)
+	if err != nil {
+		log.Println("Error reading body:", err)
+		return nil, 0, errs.ExternalApiError
+	}
+
+	return bytes.NewReader(buf.Bytes()), n, nil
 }

@@ -43,9 +43,13 @@ func (r *MinioWordCloudRepo) UploadWordCloud(ctx context.Context, name string, d
 }
 
 func (r *MinioWordCloudRepo) GetWordCloud(ctx context.Context, name string) (io.ReadCloser, error) {
+	_, err := r.client.StatObject(ctx, r.bucket, name, minio.StatObjectOptions{})
+	if err != nil {
+		return nil, err
+	}
 	obj, err := r.client.GetObject(ctx, r.bucket, name, minio.GetObjectOptions{})
 	if err != nil {
-		return nil, fmt.Errorf("failed to get file from minio: %w", err)
+		return nil, err
 	}
 	return obj, nil
 }

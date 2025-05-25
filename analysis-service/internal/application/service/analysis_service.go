@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"io"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -38,7 +39,7 @@ func (s *AnalysisService) AnalyzeFile(ctx context.Context, fileID string) (*doma
 	}
 
 	analysis, err := s.analysisRepo.GetAnalysis(uuidFileID)
-	if err != nil || !errors.Is(err, gorm.ErrRecordNotFound) {
+	if err == nil || !errors.Is(err, gorm.ErrRecordNotFound) {
 		return analysis, err
 	}
 
@@ -46,6 +47,8 @@ func (s *AnalysisService) AnalyzeFile(ctx context.Context, fileID string) (*doma
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println("File got")
 
 	wordCloud, size, err := s.quickChartApi.GetWordCloud(fileText)
 	if err != nil {
@@ -60,6 +63,7 @@ func (s *AnalysisService) AnalyzeFile(ctx context.Context, fileID string) (*doma
 	}
 
 	analysis = &domain.Analysis{
+		FileID:   uuidFileID,
 		Location: location,
 	}
 	analyzeText(fileText, analysis)

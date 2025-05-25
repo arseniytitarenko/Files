@@ -4,6 +4,7 @@ import (
 	"errors"
 	"files-analysis/internal/application/errs"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
 )
 
@@ -16,6 +17,7 @@ var errorStatusMap = map[error]int{
 }
 
 func HandleError(c *gin.Context, err error) {
+	log.Println(err.Error())
 	for e, code := range errorStatusMap {
 		if errors.Is(err, e) {
 			c.JSON(code, gin.H{"error": err.Error()})

@@ -8,5 +8,5 @@ type FileAnalysisResponse struct {
 }
 
 type WordCLoudParams struct {
-	Location string `form:"location"`
+	Location string `form:"location" binding:"required"`
 }

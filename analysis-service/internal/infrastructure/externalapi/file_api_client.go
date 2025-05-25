@@ -3,6 +3,7 @@ package externalapi
 import (
 	"files-analysis/internal/application/errs"
 	"io"
+	"log"
 	"mime"
 	"net/http"
 )
@@ -19,11 +20,13 @@ func NewFileApiClient() *FileApiClient {
 func (f *FileApiClient) GetFile(id string) (string, string, error) {
 	resp, err := f.httpClient.Get(f.endpoint + "/" + id)
 	if err != nil {
+		log.Println(err)
 		return "", "", errs.ExternalApiError
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
+		log.Println(err)
 		return "", "", errs.ExternalApiError
 	}
 
